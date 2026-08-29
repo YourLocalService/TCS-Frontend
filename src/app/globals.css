@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* Self-hosted copies of the original theme's fonts — pulled straight from
+   tcs-canada.ca's own wp-content/themes/tcs/assets/fonts/, same font-family
+   names and weights as the live site's stylesheet. */
+@font-face {
+  font-family: "Book Antiqua";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/BookAntiqua-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Book Antiqua";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/BookAntiqua-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Futura New";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/FuturaNew-Book.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Futura New";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/FuturaNew-Bold.woff2") format("woff2");
+}
+
+:root {
+  --color-navy: #1c2748;
+  --color-navy-light: #222e55;
+  --color-gold: #f9e6ae;
+  --color-gold-menu: #ead267;
+  --color-gold-dark: #d9b969;
+  --color-ink: #3b4046;
+  --background: #ffffff;
+  --foreground: var(--color-ink);
+
+  --font-body: "Futura New", Arial, Helvetica, sans-serif;
+  --font-heading: "Book Antiqua", Georgia, "Times New Roman", serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-navy: var(--color-navy);
+  --color-navy-light: var(--color-navy-light);
+  --color-gold: var(--color-gold);
+  --color-gold-menu: var(--color-gold-menu);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-ink: var(--color-ink);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Exact button treatment from the original theme's .btn / .btn--main:
+   sharp corners, uppercase, and a diagonal shine that sweeps across the
+   button on an endless loop. */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  left: -40px;
+  top: -150px;
+  z-index: 1;
+  display: block;
+  width: 30px;
+  height: 300px;
+  margin-left: 60px;
+  background: #fff;
+  opacity: 0.8;
+  transform: rotate(45deg);
+  animation: btn-slide 2.3s ease-in-out 0.05s infinite;
+}
+
+@keyframes btn-slide {
+  0% {
+    left: -40px;
+  }
+  50% {
+    left: 120%;
+  }
+  100% {
+    left: 120%;
+  }
+}
