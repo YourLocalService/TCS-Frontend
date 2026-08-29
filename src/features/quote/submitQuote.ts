@@ -1,4 +1,5 @@
 import type { QuoteFormData, QuoteResponse } from "./types";
+import type { Dictionary } from "@/i18n/dictionaries";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 const QUOTE_ENDPOINT = "/api/email/form";
@@ -10,7 +11,10 @@ export interface SubmitResult {
 }
 
 /** POST the quote to the Spring Boot backend, which stores it and emails both sides. */
-export async function submitQuote(formData: QuoteFormData): Promise<SubmitResult> {
+export async function submitQuote(
+  formData: QuoteFormData,
+  t: Dictionary["quote"],
+): Promise<SubmitResult> {
   try {
     const response = await fetch(`${API_BASE_URL}${QUOTE_ENDPOINT}`, {
       method: "POST",
@@ -22,36 +26,34 @@ export async function submitQuote(formData: QuoteFormData): Promise<SubmitResult
       if (response.status === 400) {
         return {
           success: false,
-          message: "Please check your details and try again.",
+          message: t.errValidation,
         };
       }
       if (response.status === 429) {
         return {
           success: false,
-          message: "Too many requests. Please wait a moment and try again.",
+          message: t.errRate,
         };
       }
       if (response.status >= 500) {
         return {
           success: false,
-          message:
-            "We couldn't submit your request right now. Please try again later, or call us directly.",
+          message: t.errServer,
         };
       }
-      return { success: false, message: "Something went wrong. Please try again." };
+      return { success: false, message: t.errGeneric };
     }
 
     return {
       success: true,
-      message: "Thank you — your request has been sent. We'll be in touch shortly.",
+      message: t.successBody,
       data: (await response.json()) as QuoteResponse,
     };
   } catch (error) {
     console.error("Quote submission failed:", error);
     return {
       success: false,
-      message:
-        "Unable to reach the server. Please check your connection and try again.",
+      message: t.errNetwork,
     };
   }
 }

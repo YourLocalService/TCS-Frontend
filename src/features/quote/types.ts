@@ -37,8 +37,14 @@ export const countries = ["CANADA", "USA"] as const;
 /**
  * The quote form offers the same service list the header nav does, plus the
  * facade work that only appears in the footer.
+ *
+ * `title` is the canonical English name and is what gets submitted, so the
+ * business always receives one consistent vocabulary; `slug` keys the
+ * translated label shown to the visitor.
  */
-export const quoteServices: string[] = [
-  ...services.map((s) => s.title),
-  "Facade and finishing works",
+export type QuoteService = { slug: string; title: string };
+
+export const quoteServices: QuoteService[] = [
+  ...services.map((s) => ({ slug: s.slug, title: s.title })),
+  { slug: "side", title: "Facade and finishing works" },
 ];

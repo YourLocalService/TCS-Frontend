@@ -1,16 +1,18 @@
 import { ButtonMain } from "./Button";
+import type { Dictionary, Locale } from "@/i18n/dictionaries";
 
 /**
  * Full-bleed banner from the live site: 215px/155px vertical padding over a
  * background graphic, with a 48px heading and 24px Book Antiqua body copy.
  */
 export default function PriceBanner({
-  heading = "Best Price Guaranteed!",
-  body = "We guarantee competitive prices on materials and services without compromising quality! Don't wait, make the right choice and contact us today!",
-  ctaLabel = "Get a Free Consultation",
+  dict,
+  lang,
+  ctaLabel,
 }: {
-  heading?: string;
-  body?: string;
+  dict: Dictionary["price"];
+  lang: Locale;
+  /** Service pages override the CTA with their own wording. */
   ctaLabel?: string;
 }) {
   return (
@@ -20,13 +22,13 @@ export default function PriceBanner({
     >
       <div className="mx-auto max-w-[1440px] text-center">
         <h2 className="font-serif text-[48px] font-normal text-white max-lg:text-4xl">
-          {heading}
+          {dict.heading}
         </h2>
         <p className="mx-auto mt-[35px] max-w-[960px] font-serif text-[24px] leading-[37.92px] text-white">
-          {body}
+          {dict.body}
         </p>
         <div className="mt-[92px] flex justify-center">
-          <ButtonMain href="/quote">{ctaLabel}</ButtonMain>
+          <ButtonMain href={`/${lang}/quote`}>{ctaLabel ?? dict.cta}</ButtonMain>
         </div>
       </div>
     </section>

@@ -2,18 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import Logo from "./Logo";
-import { navLinks, services, site } from "@/data/site";
+import { services, site } from "@/data/site";
+import { switchLocalePath, type Dictionary, type Locale } from "@/i18n/dictionaries";
 
 function Caret({ open = false }: { open?: boolean }) {
   return (
     <svg
-      width="8"
-      height="5"
-      viewBox="0 0 8 5"
-      fill="none"
-      className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+      width="8" height="5" viewBox="0 0 8 5" fill="none"
+      className={`shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
       aria-hidden
     >
       <path d="M0 0h8L4 5z" fill="currentColor" />
@@ -21,7 +20,7 @@ function Caret({ open = false }: { open?: boolean }) {
   );
 }
 
-/** Right-hand dropdowns share the mega-menu's navy panel and 10px/23px padding. */
+/** Right-hand dropdowns share the mega-menu's navy panel. */
 function Panel({ open, children }: { open: boolean; children: React.ReactNode }) {
   return (
     <div
@@ -29,31 +28,53 @@ function Panel({ open, children }: { open: boolean; children: React.ReactNode })
         open ? "visible opacity-100" : "invisible opacity-0"
       }`}
     >
-      <ul className="whitespace-nowrap bg-navy-light px-[23px] py-[10px]">
-        {children}
-      </ul>
+      <ul className="whitespace-nowrap bg-navy-light px-[23px] py-[10px]">{children}</ul>
     </div>
   );
 }
 
-const countries = [
-  { code: "USA", flag: "/images/flag-usa.svg", href: "https://tcs-us.vip/" },
-  { code: "UA", flag: "/images/flag-ua.svg", href: "https://tcs-ukraine.com" },
-];
-
-export default function Header() {
+export default function Header({
+  nav,
+  serviceNames,
+  lang,
+}: {
+  nav: Dictionary["nav"];
+  serviceNames: Dictionary["services"];
+  lang: Locale;
+}) {
   const [open, setOpen] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileServices, setMobileServices] = useState(false);
+  const pathname = usePathname();
   const is = (k: string) => open === k;
+
+  const p = (path: string) => `/${lang}${path}`;
+
+  // Lock body scroll while the drawer is open.
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  const mainLinks = [
+    { label: nav.aboutUs, href: p("/about-us") },
+    { label: nav.gallery, href: p("/gallery") },
+    { label: nav.contacts, href: p("/contacts") },
+    { label: nav.quote, href: p("/quote") },
+  ];
+
+  const otherLocale: Locale = lang === "en" ? "ru" : "en";
 
   return (
     <header className="relative z-50 mx-auto my-[35px] w-full max-w-[1440px] px-[15px]">
       <div className="flex items-center justify-between">
-        <Link href="/" className="shrink-0">
+        <Link href={p("")} className="shrink-0" aria-label="TCS">
           <Logo />
         </Link>
 
-        {/* Nav items are 14px uppercase on the live site, with 10px/22px hit areas. */}
+        {/* Desktop nav — 14px uppercase with 10px/22px hit areas. */}
         <nav className="hidden items-center lg:flex">
           <div
             className="relative"
@@ -67,11 +88,10 @@ export default function Header() {
                   : "text-black hover:text-gold-menu"
               }`}
             >
-              Services
+              {nav.services}
               <Caret open={is("services")} />
             </button>
 
-            {/* Mega-menu: 619px wide, flush under the tab, two columns. */}
             <div
               className={`absolute left-0 top-full w-[619px] bg-navy-light p-[30px_28px] transition-opacity duration-200 ${
                 is("services") ? "visible opacity-100" : "invisible opacity-0"
@@ -81,10 +101,10 @@ export default function Header() {
                 {services.map((s) => (
                   <li key={s.slug}>
                     <Link
-                      href={`/${s.slug}`}
+                      href={p(`/${s.slug}`)}
                       className="block px-[22px] py-[10px] text-[14px] uppercase leading-[21.5px] text-white transition-colors hover:text-gold-menu"
                     >
-                      {s.title}
+                      {serviceNames[s.slug as keyof typeof serviceNames]}
                     </Link>
                   </li>
                 ))}
@@ -92,19 +112,18 @@ export default function Header() {
             </div>
           </div>
 
-          {navLinks.map((l) => (
+          {mainLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               className="px-[22px] py-[10px] text-[14px] uppercase text-black transition-colors hover:text-gold-menu"
             >
-              {l.title}
+              {l.label}
             </Link>
           ))}
         </nav>
 
         <div className="hidden items-center gap-[22px] lg:flex">
-          {/* Phone: first number is the trigger, the other two drop down. */}
           <div
             className="relative"
             onMouseEnter={() => setOpen("phone")}
@@ -124,123 +143,190 @@ export default function Header() {
               <Caret open={is("phone")} />
             </a>
             <Panel open={is("phone")}>
-              {site.phones.slice(1).map((p) => (
-                <li key={p}>
+              {site.phones.slice(1).map((ph) => (
+                <li key={ph}>
                   <a
-                    href={`tel:${p}`}
+                    href={`tel:${ph}`}
                     className="block py-[6px] text-[14px] text-white transition-colors hover:text-gold-menu"
                   >
-                    {p}
+                    {ph}
                   </a>
                 </li>
               ))}
             </Panel>
           </div>
 
-          {/* Language: EN is current, RU lives on the site's /ru tree. */}
+          {/* Language switcher — swaps the locale segment of the current path. */}
           <div
             className="relative"
             onMouseEnter={() => setOpen("lang")}
             onMouseLeave={() => setOpen(null)}
           >
-            <button className="flex items-center gap-1.5 py-[10px] text-[14px] uppercase text-black transition-colors hover:text-gold-menu">
-              En
+            <button
+              className="flex items-center gap-1.5 py-[10px] text-[14px] uppercase text-black transition-colors hover:text-gold-menu"
+              aria-label={nav.language}
+            >
+              {lang}
               <Caret open={is("lang")} />
             </button>
             <Panel open={is("lang")}>
               <li>
-                <a
-                  href="https://tcs-canada.ca/ru/"
+                <Link
+                  href={switchLocalePath(pathname, otherLocale)}
                   className="block py-[6px] text-[14px] uppercase text-white transition-colors hover:text-gold-menu"
                 >
-                  Ru
-                </a>
+                  {otherLocale}
+                </Link>
               </li>
             </Panel>
           </div>
 
-          <span className="text-[14px] uppercase text-black/30">Country</span>
-
-          {/* Country: CA is current; USA and UA are separate TCS sites. */}
-          <div
-            className="relative"
-            onMouseEnter={() => setOpen("country")}
-            onMouseLeave={() => setOpen(null)}
-          >
-            <button className="flex items-center gap-1.5 py-[10px] text-[14px] uppercase text-black transition-colors hover:text-gold-menu">
-              <Image src="/images/flag-ca.svg" alt="" width={15} height={10} />
-              Ca
-              <Caret open={is("country")} />
-            </button>
-            <Panel open={is("country")}>
-              {countries.map((c) => (
-                <li key={c.code}>
-                  <a
-                    href={c.href}
-                    className="flex items-center gap-1.5 py-[6px] text-[14px] uppercase text-white transition-colors hover:text-gold-menu"
-                  >
-                    <Image src={c.flag} alt="" width={15} height={10} />
-                    {c.code}
-                  </a>
-                </li>
-              ))}
-            </Panel>
-          </div>
+          <span className="flex items-center gap-1.5 text-[14px] uppercase text-black">
+            <Image src="/images/flag-ca.svg" alt="" width={15} height={10} />
+            Ca
+          </span>
         </div>
 
+        {/* Hamburger morphs into a close icon. */}
         <button
-          className="flex flex-col gap-1.5 lg:hidden"
-          aria-label="Toggle menu"
+          className="relative z-[70] flex h-[24px] w-[26px] flex-col justify-center lg:hidden"
+          aria-label={mobileOpen ? nav.closeMenu : nav.menu}
+          aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((v) => !v)}
         >
-          <span className="h-0.5 w-6 bg-navy" />
-          <span className="h-0.5 w-6 bg-navy" />
-          <span className="h-0.5 w-6 bg-navy" />
+          <span
+            className={`absolute h-[2px] w-full transition-all duration-300 ${
+              mobileOpen ? "translate-y-0 rotate-45 bg-white" : "-translate-y-[7px] bg-navy"
+            }`}
+          />
+          <span
+            className={`absolute h-[2px] w-full bg-navy transition-all duration-200 ${
+              mobileOpen ? "opacity-0" : "opacity-100"
+            }`}
+          />
+          <span
+            className={`absolute h-[2px] w-full transition-all duration-300 ${
+              mobileOpen ? "translate-y-0 -rotate-45 bg-white" : "translate-y-[7px] bg-navy"
+            }`}
+          />
         </button>
       </div>
 
-      {mobileOpen && (
-        <div className="mt-4 bg-navy-light px-6 py-6 lg:hidden">
-          <p className="mb-3 text-[14px] uppercase text-gold-menu">Services</p>
-          <ul className="mb-5 space-y-2">
-            {services.map((s) => (
-              <li key={s.slug}>
-                <Link
-                  href={`/${s.slug}`}
-                  className="block text-[14px] uppercase text-white"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {s.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <ul className="space-y-2 border-t border-white/10 pt-4">
-            {navLinks.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="block text-[14px] uppercase text-white"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {l.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-4 space-y-1 border-t border-white/10 pt-4">
-            {site.phones.map((p) => (
+      {/* Backdrop */}
+      <div
+        onClick={() => setMobileOpen(false)}
+        className={`fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+          mobileOpen ? "visible opacity-100" : "invisible opacity-0"
+        }`}
+        aria-hidden
+      />
+
+      {/* Slide-in drawer */}
+      <div
+        className={`fixed right-0 top-0 z-[65] h-[100dvh] w-[min(88vw,380px)] overflow-y-auto bg-navy-light transition-transform duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
+          mobileOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col px-[30px] pb-[40px] pt-[100px]">
+          {/* Services accordion */}
+          <div
+            className="border-b border-white/10"
+            style={{ transitionDelay: mobileOpen ? "80ms" : "0ms" }}
+          >
+            <button
+              onClick={() => setMobileServices((v) => !v)}
+              className={`flex w-full items-center justify-between py-[16px] text-[16px] uppercase transition-all duration-500 ${
+                mobileServices ? "text-gold-menu" : "text-white"
+              } ${mobileOpen ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"}`}
+              style={{ transitionDelay: mobileOpen ? "80ms" : "0ms" }}
+              aria-expanded={mobileServices}
+            >
+              {nav.services}
+              <Caret open={mobileServices} />
+            </button>
+
+            <div
+              className={`grid transition-all duration-300 ease-out ${
+                mobileServices ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <ul className="overflow-hidden">
+                {services.map((s) => (
+                  <li key={s.slug}>
+                    <Link
+                      href={p(`/${s.slug}`)}
+                      onClick={() => setMobileOpen(false)}
+                      className="block py-[10px] pl-[14px] text-[14px] uppercase leading-[1.4] text-white/70 transition-colors hover:text-gold-menu"
+                    >
+                      {serviceNames[s.slug as keyof typeof serviceNames]}
+                    </Link>
+                  </li>
+                ))}
+                <li className="pb-[12px]" />
+              </ul>
+            </div>
+          </div>
+
+          {/* Main links, staggered in behind the drawer */}
+          {mainLinks.map((l, i) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setMobileOpen(false)}
+              className={`border-b border-white/10 py-[16px] text-[16px] uppercase text-white transition-all duration-500 hover:text-gold-menu ${
+                mobileOpen ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"
+              }`}
+              style={{ transitionDelay: mobileOpen ? `${140 + i * 60}ms` : "0ms" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          <div
+            className={`mt-[30px] transition-all duration-500 ${
+              mobileOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+            style={{ transitionDelay: mobileOpen ? "400ms" : "0ms" }}
+          >
+            <p className="mb-[10px] text-[12px] uppercase tracking-wide text-white/40">
+              {nav.callUs}
+            </p>
+            {site.phones.map((ph) => (
               <a
-                key={p}
-                href={`tel:${p}`}
-                className="block text-[14px] text-white"
+                key={ph}
+                href={`tel:${ph}`}
+                className="block py-[4px] text-[15px] text-white transition-colors hover:text-gold-menu"
               >
-                {p}
+                {ph}
               </a>
             ))}
           </div>
+
+          <div
+            className={`mt-[30px] flex items-center gap-[10px] transition-all duration-500 ${
+              mobileOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+            style={{ transitionDelay: mobileOpen ? "460ms" : "0ms" }}
+          >
+            <span className="text-[12px] uppercase tracking-wide text-white/40">
+              {nav.language}
+            </span>
+            <Link
+              href={switchLocalePath(pathname, lang)}
+              aria-current="true"
+              className="bg-gold px-[14px] py-[6px] text-[13px] uppercase text-black"
+            >
+              {lang}
+            </Link>
+            <Link
+              href={switchLocalePath(pathname, otherLocale)}
+              className="px-[14px] py-[6px] text-[13px] uppercase text-white/70 ring-1 ring-white/20 transition-colors hover:text-gold-menu"
+            >
+              {otherLocale}
+            </Link>
+          </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

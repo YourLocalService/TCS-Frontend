@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { team } from "@/data/site";
+import type { Dictionary } from "@/i18n/dictionaries";
 
 const photos: Record<string, string> = {
   "Maksym Ovramenko": "/images/team-maksym.jpg",
@@ -8,12 +9,12 @@ const photos: Record<string, string> = {
 };
 
 /** Live layout: 48px centred title, then three 440px cards with 430px photos. */
-export default function TeamSection() {
+export default function TeamSection({ dict }: { dict: Dictionary["team"] }) {
   return (
     <section className="px-[15px] py-[120px] max-lg:py-16">
       <div className="mx-auto max-w-[1440px]">
         <h2 className="text-center font-serif text-[48px] font-normal text-black max-lg:text-4xl">
-          Team TCS
+          {dict.title}
         </h2>
 
         <div className="mt-[70px] grid grid-cols-[440px_440px_440px] justify-center gap-[40px] max-xl:grid-cols-1 max-xl:justify-items-center">
@@ -30,7 +31,7 @@ export default function TeamSection() {
                 {member.name}
               </p>
               <p className="mt-[10px] text-[18px] text-black/60">
-                {member.role} of company
+                {dict.role}
               </p>
               <a
                 href={`tel:${member.phone}`}

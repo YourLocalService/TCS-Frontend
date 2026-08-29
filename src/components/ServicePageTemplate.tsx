@@ -4,6 +4,7 @@ import PriceBanner from "./PriceBanner";
 import TeamSection from "./TeamSection";
 import { heroImages } from "@/data/site";
 import type { ServicePageData } from "@/data/serviceContent";
+import type { Dictionary, Locale } from "@/i18n/dictionaries";
 
 /**
  * Live service-page anatomy:
@@ -11,7 +12,15 @@ import type { ServicePageData } from "@/data/serviceContent";
  * Rows sit in a 60/120 padded section; the grid is three 453px columns with
  * an 80px row gap and a 20px column gap.
  */
-export default function ServicePageTemplate({ data }: { data: ServicePageData }) {
+export default function ServicePageTemplate({
+  data,
+  dict,
+  lang,
+}: {
+  data: ServicePageData;
+  dict: Dictionary;
+  lang: Locale;
+}) {
   const gallery = data.bullets?.images ?? [];
 
   return (
@@ -21,6 +30,7 @@ export default function ServicePageTemplate({ data }: { data: ServicePageData })
         subtitle={data.subtitle}
         ctaLabel={data.ctaLabel}
         image={heroImages[data.slug]}
+        lang={lang}
       />
 
       <section className="px-[15px] pb-[120px] pt-[60px] max-lg:pb-16">
@@ -101,8 +111,8 @@ export default function ServicePageTemplate({ data }: { data: ServicePageData })
         </section>
       )}
 
-      <PriceBanner ctaLabel={data.ctaLabel} />
-      <TeamSection />
+      <PriceBanner dict={dict.price} lang={lang} ctaLabel={data.ctaLabel} />
+      <TeamSection dict={dict.team} />
     </>
   );
 }

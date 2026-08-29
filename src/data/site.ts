@@ -58,16 +58,16 @@ export const footerServices: NavService[] = services.map((s) =>
 
 // The home page "Our services" grid is its own list: 7 image tiles, and its
 // labels/links differ from the header nav (e.g. "Gazebos and fences").
-export type HomeTile = { title: string; href: string; image: string };
+export type HomeTile = { key: string; title: string; href: string; image: string };
 
 export const homeTiles: HomeTile[] = [
-  { title: "Repair and insulation of roofs", href: "/mounting", image: "/images/tile-mounting.png" },
-  { title: "Thermal imaging survey", href: "/thermal", image: "/images/tile-thermal.png" },
-  { title: "Civil works", href: "/remont", image: "/images/tile-remont.png" },
-  { title: "Gazebos and fences", href: "/gazebo", image: "/images/tile-fence.png" },
-  { title: "Waterproofing", href: "/hydro-isolation", image: "/images/tile-hydro-isolation.png" },
-  { title: "Dismantling work", href: "/dismantling", image: "/images/tile-dismantling.png" },
-  { title: "Landscaping and interlocking", href: "/landscaping-and-interlocking", image: "/images/tile-landscaping.png" },
+  { key: "mounting", title: "Repair and insulation of roofs", href: "/mounting", image: "/images/tile-mounting.png" },
+  { key: "thermal", title: "Thermal imaging survey", href: "/thermal", image: "/images/tile-thermal.png" },
+  { key: "remont", title: "Civil works", href: "/remont", image: "/images/tile-remont.png" },
+  { key: "fence", title: "Gazebos and fences", href: "/gazebo", image: "/images/tile-fence.png" },
+  { key: "hydro-isolation", title: "Waterproofing", href: "/hydro-isolation", image: "/images/tile-hydro-isolation.png" },
+  { key: "dismantling", title: "Dismantling work", href: "/dismantling", image: "/images/tile-dismantling.png" },
+  { key: "landscaping", title: "Landscaping and interlocking", href: "/landscaping-and-interlocking", image: "/images/tile-landscaping.png" },
 ];
 
 export const team = [

@@ -1,4 +1,5 @@
 import type { FormErrors, QuoteFormData } from "./types";
+import type { Dictionary } from "@/i18n/dictionaries";
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -8,26 +9,29 @@ function isValidPhone(phone: string): boolean {
   return /^[\d\s\-()+ ]{7,20}$/.test(phone);
 }
 
-export function validateQuoteForm(data: Partial<QuoteFormData>): FormErrors {
+export function validateQuoteForm(
+  data: Partial<QuoteFormData>,
+  t: Dictionary["quote"],
+): FormErrors {
   const errors: FormErrors = {};
 
-  if (!data.name?.trim()) errors.name = "First name is required";
-  if (!data.lastname?.trim()) errors.lastname = "Last name is required";
+  if (!data.name?.trim()) errors.name = t.errFirstName;
+  if (!data.lastname?.trim()) errors.lastname = t.errLastName;
 
   if (!data.email?.trim()) {
-    errors.email = "Email is required";
+    errors.email = t.errEmail;
   } else if (!isValidEmail(data.email)) {
-    errors.email = "Please enter a valid email address";
+    errors.email = t.errEmailInvalid;
   }
 
   if (!data.phone?.trim()) {
-    errors.phone = "Phone number is required";
+    errors.phone = t.errPhone;
   } else if (!isValidPhone(data.phone)) {
-    errors.phone = "Please enter a valid phone number";
+    errors.phone = t.errPhoneInvalid;
   }
 
   if (!data.service || data.service.length === 0) {
-    errors.service = "Please select at least one service";
+    errors.service = t.errService;
   }
 
   return errors;

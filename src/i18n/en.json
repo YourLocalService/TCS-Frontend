@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "siteTitle": "TCS Canada | Technological Construction Service",
+    "siteDescription": "All types of construction works in one place: roofing, waterproofing, civil works, demolition, landscaping, decks & fences, retaining walls and gazebos in Toronto & the GTA."
+  },
+  "nav": {
+    "services": "Services",
+    "aboutUs": "About us",
+    "gallery": "Gallery",
+    "contacts": "Contacts",
+    "quote": "Quote",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "language": "Language",
+    "callUs": "Call us"
+  },
+  "services": {
+    "mounting": "Repair and insulation of roofs",
+    "thermal": "Thermal imaging survey",
+    "hydro-isolation": "Waterproofing",
+    "remont": "Civil works",
+    "dismantling": "Dismantling work",
+    "landscaping-and-interlocking": "Landscaping and interlocking",
+    "deck": "Deck & Fences",
+    "walls": "Retaining Walls",
+    "gazebo": "Gazebo",
+    "side": "Facade and finishing works"
+  },
+  "home": {
+    "heroTitle": "All Types of Construction Works in One Place!",
+    "heroSubtitle": "Trust the Professionals: Reliable Construction, Repair, and Maintenance Services for Your Projects",
+    "heroCta": "Get a Free Consultation",
+    "aboutTitle": "TCS: Reliable Construction Contractor and Partner!",
+    "aboutCta": "About the Company",
+    "servicesTitle": "Our services",
+    "aboutBody": "TCS has been successfully operating in the construction industry since 1998.\n\nWe take pride in being a reliable and professional partner for clients in Canada, the United States, Israel and Ukraine, with a strong workforce and over 25 years of experience that lets us tackle project and production challenges of any complexity."
+  },
+  "tiles": {
+    "mounting": "Repair and insulation of roofs",
+    "thermal": "Thermal imaging survey",
+    "remont": "Civil works",
+    "fence": "Gazebos and fences",
+    "hydro-isolation": "Waterproofing",
+    "dismantling": "Dismantling work",
+    "landscaping": "Landscaping and interlocking"
+  },
+  "price": {
+    "heading": "Best Price Guaranteed!",
+    "body": "We guarantee competitive prices on materials and services without compromising quality! Don't wait, make the right choice and contact us today!",
+    "cta": "Get a Free Consultation"
+  },
+  "team": {
+    "title": "Team TCS",
+    "role": "Director of company"
+  },
+  "footer": {
+    "services": "Services",
+    "tcs": "TCS",
+    "contact": "Contact",
+    "chooseCountry": "Choose your country",
+    "newAddress": "New address",
+    "rights": "All rights reserved.",
+    "tagline": "Trusted construction contractor since"
+  },
+  "pages": {
+    "about": "About us",
+    "gallery": "Gallery",
+    "contacts": "Contacts"
+  },
+  "contacts": {
+    "address": "Address:",
+    "phones": "Phones:",
+    "hours": "Working hours:",
+    "social": "Social pages:",
+    "mapTitle": "TCS office location"
+  },
+  "quote": {
+    "title": "Get a Free Consultation",
+    "intro": "Tell us what you need and we'll come back with a free, no-obligation quote. Prefer to talk it through? Call us on",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "servicesLegend": "What do you need done?",
+    "locationLegend": "Where is the property?",
+    "country": "Country",
+    "town": "Town / City",
+    "street": "Street address",
+    "postal": "Postal code",
+    "description": "Tell us about the project",
+    "descriptionPlaceholder": "Size of the area, current condition, timing, and anything else that helps us quote accurately.",
+    "photos": "Photos (optional)",
+    "filesSelected": "file(s) selected",
+    "submit": "Send Request",
+    "submitting": "Sending…",
+    "uploading": "Uploading photos…",
+    "successTitle": "Request received",
+    "successBody": "Thank you — your request has been sent. We'll be in touch shortly.",
+    "sendAnother": "Send another request",
+    "errFirstName": "First name is required",
+    "errLastName": "Last name is required",
+    "errEmail": "Email is required",
+    "errEmailInvalid": "Please enter a valid email address",
+    "errPhone": "Phone number is required",
+    "errPhoneInvalid": "Please enter a valid phone number",
+    "errService": "Please select at least one service",
+    "errFix": "Please correct the highlighted fields.",
+    "errUpload": "Your photos couldn't be uploaded. You can remove them and submit without photos.",
+    "errNetwork": "Unable to reach the server. Please check your connection and try again.",
+    "errServer": "We couldn't submit your request right now. Please try again later, or call us directly.",
+    "errGeneric": "Something went wrong. Please try again.",
+    "errValidation": "Please check your details and try again.",
+    "errRate": "Too many requests. Please wait a moment and try again."
+  }
+}
