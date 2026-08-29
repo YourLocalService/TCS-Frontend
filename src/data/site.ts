@@ -33,6 +33,7 @@ export const navLinks = [
   { title: "About us", href: "/about-us" },
   { title: "Gallery", href: "/gallery" },
   { title: "Contacts", href: "/contacts" },
+  { title: "Quote", href: "/quote" },
 ];
 
 export const heroImages: Record<string, string> = {

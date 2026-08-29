@@ -26,7 +26,7 @@ export default function PriceBanner({
           {body}
         </p>
         <div className="mt-[92px] flex justify-center">
-          <ButtonMain href="/contacts">{ctaLabel}</ButtonMain>
+          <ButtonMain href="/quote">{ctaLabel}</ButtonMain>
         </div>
       </div>
     </section>

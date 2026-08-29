@@ -29,7 +29,7 @@ export default function Hero({
           </h1>
           <p className="mt-[28px] text-[18px] text-[#e9e9e9]">{subtitle}</p>
           <div className="mt-[60px]">
-            <ButtonMain href="/contacts">{ctaLabel}</ButtonMain>
+            <ButtonMain href="/quote">{ctaLabel}</ButtonMain>
           </div>
         </div>
       </div>
