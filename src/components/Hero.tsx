@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ButtonMain } from "./Button";
-import type { Locale } from "@/i18n/dictionaries";
+import { localePath, type Locale } from "@/i18n/dictionaries";
 
 export default function Hero({
   title,
@@ -32,7 +32,7 @@ export default function Hero({
           </h1>
           <p className="mt-[28px] text-[18px] text-[#e9e9e9]">{subtitle}</p>
           <div className="mt-[60px]">
-            <ButtonMain href={`/${lang}/quote`}>{ctaLabel}</ButtonMain>
+            <ButtonMain href={localePath(lang, "/quote")}>{ctaLabel}</ButtonMain>
           </div>
         </div>
       </div>

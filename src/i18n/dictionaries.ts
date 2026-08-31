@@ -24,13 +24,31 @@ export const hasLocale = (locale: string): locale is Locale =>
 export const getDictionary = async (locale: Locale): Promise<Dictionary> =>
   dictionaries[locale]();
 
-/** Swap the locale segment of a path: /ru/gallery -> /en/gallery */
-export function switchLocalePath(pathname: string, next: Locale): string {
+/**
+ * Build an internal link for a locale.
+ *
+ * English is served on unprefixed URLs (`/mounting`) and Russian under a
+ * prefix (`/ru/mounting`), so the old tcs-canada.ca paths keep working and the
+ * eventual cross-domain redirect stays a 1:1 path map. The proxy rewrites the
+ * unprefixed URLs onto the `/en` tree internally.
+ *
+ * This is the single source of truth for internal hrefs — don't hand-build
+ * `/${lang}${path}` anywhere.
+ */
+export function localePath(lang: Locale, path = ""): string {
+  const clean = path === "/" ? "" : path;
+  if (lang === defaultLocale) return clean || "/";
+  return `/${lang}${clean}`;
+}
+
+/** Strip a leading locale segment: /ru/gallery -> /gallery */
+export function stripLocale(pathname: string): string {
   const parts = pathname.split("/").filter(Boolean);
-  if (parts.length > 0 && hasLocale(parts[0])) {
-    parts[0] = next;
-  } else {
-    parts.unshift(next);
-  }
-  return `/${parts.join("/")}`;
+  if (parts.length > 0 && hasLocale(parts[0])) parts.shift();
+  return parts.length ? `/${parts.join("/")}` : "";
+}
+
+/** Same page, other locale: /ru/gallery -> /gallery */
+export function switchLocalePath(pathname: string, next: Locale): string {
+  return localePath(next, stripLocale(pathname));
 }

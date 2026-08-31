@@ -2,9 +2,11 @@ import Image from "next/image";
 import Hero from "./Hero";
 import PriceBanner from "./PriceBanner";
 import TeamSection from "./TeamSection";
-import { heroImages } from "@/data/site";
+import { heroImages, site } from "@/data/site";
 import type { ServicePageData } from "@/data/serviceContent";
 import type { Dictionary, Locale } from "@/i18n/dictionaries";
+import { getCanonicalUrl } from "@/lib/seo/canonical";
+import { JsonLd, getBreadcrumbSchema, getServiceSchema } from "@/lib/seo/jsonld";
 
 /**
  * Live service-page anatomy:
@@ -16,15 +18,31 @@ export default function ServicePageTemplate({
   data,
   dict,
   lang,
+  path,
 }: {
   data: ServicePageData;
   dict: Dictionary;
   lang: Locale;
+  /** Locale-less route for this service, e.g. "/mounting". */
+  path: string;
 }) {
   const gallery = data.bullets?.images ?? [];
+  const serviceName =
+    dict.services[data.slug as keyof typeof dict.services] ?? data.h1;
+
+  // Two crumbs, both of which resolve — no phantom ancestor URLs.
+  const breadcrumbs = [
+    { name: site.name, url: getCanonicalUrl(lang) },
+    { name: serviceName, url: getCanonicalUrl(lang, path) },
+  ];
 
   return (
     <>
+      <JsonLd
+        data={getServiceSchema(lang, serviceName, data.subtitle, path)}
+      />
+      <JsonLd data={getBreadcrumbSchema(breadcrumbs)} />
+
       <Hero
         title={data.h1}
         subtitle={data.subtitle}

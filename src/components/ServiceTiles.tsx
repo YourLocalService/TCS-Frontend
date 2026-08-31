@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { homeTiles } from "@/data/site";
-import type { Dictionary, Locale } from "@/i18n/dictionaries";
+import { localePath, type Dictionary, type Locale } from "@/i18n/dictionaries";
 
 /**
  * Home page "Our services" grid — matches the live layout: two 670px columns
@@ -26,7 +26,7 @@ export default function ServiceTiles({
 
         <div className="mt-[60px] grid grid-cols-[670px_670px] justify-center gap-[60px] max-xl:grid-cols-1 max-xl:justify-items-center">
           {homeTiles.map((tile) => (
-            <Link key={tile.href} href={`/${lang}${tile.href}`} className="group block">
+            <Link key={tile.href} href={localePath(lang, tile.href)} className="group block">
               <Image
                 src={tile.image}
                 alt={tileNames[tile.key as keyof typeof tileNames] ?? tile.title}

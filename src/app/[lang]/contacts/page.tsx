@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { site } from "@/data/site";
 import { getDictionary, hasLocale } from "@/i18n/dictionaries";
+import { generatePageMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata({
   params,
@@ -9,10 +10,12 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
-  return {
-    title: `${dict.pages.contacts} | TCS Canada`,
+  return generatePageMetadata({
+    lang,
+    title: dict.pages.contacts,
     description: `${site.address} — ${site.phones[0]}, ${site.email}`,
-  };
+    path: "/contacts",
+  });
 }
 
 /**

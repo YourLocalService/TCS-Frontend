@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 import { getServiceData } from "@/data/serviceContentByLocale";
 import { getDictionary, hasLocale } from "@/i18n/dictionaries";
+import { generatePageMetadata } from "@/lib/seo/metadata";
 
 const SLUG = "side";
+const PATH = "/side";
 
 export async function generateMetadata({
   params,
@@ -12,7 +14,13 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const data = getServiceData(lang, SLUG);
-  return { title: `${data.metaTitle} | TCS Canada`, description: data.subtitle };
+
+  return generatePageMetadata({
+    lang,
+    title: data.metaTitle,
+    description: data.subtitle,
+    path: PATH,
+  });
 }
 
 export default async function Page({ params }: PageProps<"/[lang]/side">) {
@@ -21,6 +29,11 @@ export default async function Page({ params }: PageProps<"/[lang]/side">) {
   const dict = await getDictionary(lang);
 
   return (
-    <ServicePageTemplate data={getServiceData(lang, SLUG)} dict={dict} lang={lang} />
+    <ServicePageTemplate
+      data={getServiceData(lang, SLUG)}
+      dict={dict}
+      lang={lang}
+      path={PATH}
+    />
   );
 }

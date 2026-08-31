@@ -1,5 +1,5 @@
 import { ButtonMain } from "./Button";
-import type { Dictionary, Locale } from "@/i18n/dictionaries";
+import { localePath, type Dictionary, type Locale } from "@/i18n/dictionaries";
 
 /**
  * Full-bleed banner from the live site: 215px/155px vertical padding over a
@@ -28,7 +28,7 @@ export default function PriceBanner({
           {dict.body}
         </p>
         <div className="mt-[92px] flex justify-center">
-          <ButtonMain href={`/${lang}/quote`}>{ctaLabel ?? dict.cta}</ButtonMain>
+          <ButtonMain href={localePath(lang, "/quote")}>{ctaLabel ?? dict.cta}</ButtonMain>
         </div>
       </div>
     </section>

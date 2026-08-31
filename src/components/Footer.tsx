@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import { footerServices, site } from "@/data/site";
-import type { Dictionary, Locale } from "@/i18n/dictionaries";
+import { localePath, type Dictionary, type Locale } from "@/i18n/dictionaries";
 
 export default function Footer({
   footer,
@@ -14,7 +14,7 @@ export default function Footer({
   serviceNames: Dictionary["services"];
   lang: Locale;
 }) {
-  const p = (path: string) => `/${lang}${path}`;
+  const p = (path: string) => localePath(lang, path);
 
   return (
     <footer className="bg-navy-light text-white">

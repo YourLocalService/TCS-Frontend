@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import { galleryImages } from "@/data/galleryImages";
 import { getDictionary, hasLocale } from "@/i18n/dictionaries";
+import { generatePageMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata({
   params,
@@ -10,7 +11,12 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
-  return { title: `${dict.pages.gallery} | TCS Canada` };
+  return generatePageMetadata({
+    lang,
+    title: dict.pages.gallery,
+    description: dict.meta.siteDescription,
+    path: "/gallery",
+  });
 }
 
 /** Live layout: one 120/120 padded section, 48px centred title, then the slider. */

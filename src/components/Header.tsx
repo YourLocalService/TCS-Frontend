@@ -6,7 +6,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Logo from "./Logo";
 import { services, site } from "@/data/site";
-import { switchLocalePath, type Dictionary, type Locale } from "@/i18n/dictionaries";
+import {
+  localePath,
+  switchLocalePath,
+  type Dictionary,
+  type Locale,
+} from "@/i18n/dictionaries";
 
 function Caret({ open = false }: { open?: boolean }) {
   return (
@@ -48,7 +53,7 @@ export default function Header({
   const pathname = usePathname();
   const is = (k: string) => open === k;
 
-  const p = (path: string) => `/${lang}${path}`;
+  const p = (path: string) => localePath(lang, path);
 
   // Lock body scroll while the drawer is open.
   useEffect(() => {

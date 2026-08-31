@@ -4,7 +4,7 @@ import { ButtonMain } from "@/components/Button";
 import Hero from "@/components/Hero";
 import PriceBanner from "@/components/PriceBanner";
 import ServiceTiles from "@/components/ServiceTiles";
-import { getDictionary, hasLocale } from "@/i18n/dictionaries";
+import { getDictionary, hasLocale, localePath } from "@/i18n/dictionaries";
 
 export default async function Home({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
@@ -42,7 +42,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
                 {dict.home.aboutBody}
               </p>
               <div className="mt-[60px]">
-                <ButtonMain href={`/${lang}/about-us`}>
+                <ButtonMain href={localePath(lang, "/about-us")}>
                   {dict.home.aboutCta}
                 </ButtonMain>
               </div>

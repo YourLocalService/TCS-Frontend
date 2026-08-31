@@ -10,6 +10,28 @@ export const site = {
   since: 1998,
   yearsExperience: 25,
   countries: ["Canada", "USA", "Ukraine"],
+
+  /** Canonical origin. Env-driven so staging/preview deploys stay self-consistent. */
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://tcs-on.ca",
+  ogImage: "/og-image.jpg",
+
+  /** Split form of `address` — schema.org PostalAddress needs the parts. */
+  postalAddress: {
+    street: "107-4548 Dufferin Street",
+    city: "Toronto",
+    region: "ON",
+    postalCode: "M3H 5R9",
+    countryCode: "CA",
+  },
+
+  /**
+   * Business days, used for openingHoursSpecification. TCS works Mon–Fri, so
+   * the schema says exactly that — no invented weekend hours.
+   */
+  openingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+
+  /** Public profiles for schema.org `sameAs`. Add as they come online. */
+  socials: {} as Record<string, string>,
 };
 
 export type NavService = {

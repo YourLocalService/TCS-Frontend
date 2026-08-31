@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { aboutBlocks, aboutImage } from "@/data/aboutContent";
 import { getDictionary, hasLocale } from "@/i18n/dictionaries";
+import { generatePageMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata({
   params,
@@ -10,7 +11,12 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
-  return { title: `${dict.pages.about} | TCS Canada` };
+  return generatePageMetadata({
+    lang,
+    title: dict.pages.about,
+    description: dict.meta.siteDescription,
+    path: "/about-us",
+  });
 }
 
 /**

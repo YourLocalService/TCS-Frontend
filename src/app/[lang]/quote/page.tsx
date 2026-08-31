@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { QuoteForm } from "@/features/quote";
 import { site } from "@/data/site";
 import { getDictionary, hasLocale } from "@/i18n/dictionaries";
+import { generatePageMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata({
   params,
@@ -10,7 +11,12 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
-  return { title: `${dict.quote.title} | TCS Canada` };
+  return generatePageMetadata({
+    lang,
+    title: dict.quote.title,
+    description: dict.quote.intro,
+    path: "/quote",
+  });
 }
 
 /**
