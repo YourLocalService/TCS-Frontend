@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { QuoteForm } from "@/features/quote";
+import { QuoteForm, fetchServiceCatalog } from "@/features/quote";
 import { site } from "@/data/site";
 import { getDictionary, hasLocale } from "@/i18n/dictionaries";
 import { generatePageMetadata } from "@/lib/seo/metadata";
@@ -28,6 +28,11 @@ export default async function Page({ params }: PageProps<"/[lang]/quote">) {
   if (!hasLocale(lang)) notFound();
   const dict = await getDictionary(lang);
 
+  // Serviceids come from the org's catalogue; without them the POST is
+  // unusable, so fetch server-side (revalidated hourly) rather than in the
+  // browser on mount.
+  const catalog = await fetchServiceCatalog();
+
   return (
     <section className="px-[15px] pb-[120px] pt-[60px] max-lg:pb-16">
       <div className="mx-auto max-w-[1440px]">
@@ -45,7 +50,11 @@ export default async function Page({ params }: PageProps<"/[lang]/quote">) {
           .
         </p>
 
-        <QuoteForm dict={dict.quote} serviceNames={dict.services} />
+        <QuoteForm
+          dict={dict.quote}
+          serviceNames={dict.services}
+          catalog={catalog}
+        />
       </div>
     </section>
   );

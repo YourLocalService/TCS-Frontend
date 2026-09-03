@@ -9,14 +9,23 @@ function isValidPhone(phone: string): boolean {
   return /^[\d\s\-()+ ]{7,20}$/.test(phone);
 }
 
+/**
+ * Mirrors the server's bean validation on QuoteRequest so the visitor sees
+ * problems inline instead of a generic 400.
+ *
+ * One deliberate difference: `phone` is optional on the server but required
+ * here. A construction quote that can't be called back is not much use, and
+ * being stricter than the API can only reject payloads the API would too.
+ */
 export function validateQuoteForm(
   data: Partial<QuoteFormData>,
   t: Dictionary["quote"],
 ): FormErrors {
   const errors: FormErrors = {};
 
-  if (!data.name?.trim()) errors.name = t.errFirstName;
-  if (!data.lastname?.trim()) errors.lastname = t.errLastName;
+  // client
+  if (!data.firstName?.trim()) errors.firstName = t.errFirstName;
+  if (!data.lastName?.trim()) errors.lastName = t.errLastName;
 
   if (!data.email?.trim()) {
     errors.email = t.errEmail;
@@ -30,9 +39,15 @@ export function validateQuoteForm(
     errors.phone = t.errPhoneInvalid;
   }
 
-  if (!data.service || data.service.length === 0) {
-    errors.service = t.errService;
+  // services — @NotEmpty, max 20
+  if (!data.serviceIds || data.serviceIds.length === 0) {
+    errors.services = t.errService;
   }
+
+  // location — city/street/postalCode are @NotBlank on the server
+  if (!data.city?.trim()) errors.city = t.errCity;
+  if (!data.street?.trim()) errors.street = t.errStreet;
+  if (!data.postalCode?.trim()) errors.postalCode = t.errPostal;
 
   return errors;
 }
@@ -41,27 +56,19 @@ export function hasErrors(errors: FormErrors): boolean {
   return Object.values(errors).some((e) => e !== undefined);
 }
 
-/**
- * `workType` is a fixed constant, not a user choice. The backend picks the
- * notification sender from a hardcoded workType -> email map in EmailService;
- * an unmapped value makes the sender null and the send fails. "Construction"
- * must therefore exist in that map — keep the two in sync.
- */
-export const TCS_WORK_TYPE = "Construction";
-
 export function getInitialFormData(): QuoteFormData {
   return {
-    name: "",
-    lastname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
-    workType: TCS_WORK_TYPE,
-    service: [],
+    serviceIds: [],
     country: "CANADA",
-    town: "",
+    provinceState: "ON",
+    city: "",
     street: "",
-    postal_code: "",
+    postalCode: "",
     description: "",
-    images: [],
+    pictureKeys: [],
   };
 }

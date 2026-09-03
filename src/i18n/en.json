@@ -110,6 +110,11 @@
     "errServer": "We couldn't submit your request right now. Please try again later, or call us directly.",
     "errGeneric": "Something went wrong. Please try again.",
     "errValidation": "Please check your details and try again.",
-    "errRate": "Too many requests. Please wait a moment and try again."
+    "errRate": "Too many requests. Please wait a moment and try again.",
+    "provinceState": "Province / State",
+    "errCity": "City is required",
+    "errStreet": "Street address is required",
+    "errPostal": "Postal code is required",
+    "catalogUnavailable": "The service list can't be loaded right now. Please call us and we'll take your details over the phone."
   }
 }

@@ -4,8 +4,14 @@ import { useState } from "react";
 import { submitQuote } from "./submitQuote";
 import { uploadToS3 } from "./uploadToS3";
 import { getInitialFormData, hasErrors, validateQuoteForm } from "./quoteSchema";
-import { countries, quoteServices } from "./types";
-import type { FormErrors, FormStatus, QuoteFormData } from "./types";
+import { BACKEND_TO_ROUTE_SLUG } from "./serviceCatalog";
+import { countries } from "./types";
+import type {
+  FormErrors,
+  FormStatus,
+  QuoteFormData,
+  ServiceSummary,
+} from "./types";
 import type { Dictionary } from "@/i18n/dictionaries";
 
 const FIELD =
@@ -16,9 +22,12 @@ const ERROR = "mt-[6px] block text-[13px] text-[#b3261e]";
 export default function QuoteForm({
   dict: t,
   serviceNames,
+  catalog,
 }: {
   dict: Dictionary["quote"];
   serviceNames: Dictionary["services"];
+  /** Offerings from GET /api/orgs/{slug}/services — the source of serviceId. */
+  catalog: ServiceSummary[];
 }) {
   const [form, setForm] = useState<QuoteFormData>(getInitialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -32,13 +41,24 @@ export default function QuoteForm({
     setErrors((e) => ({ ...e, [key]: undefined }));
   };
 
-  const toggleService = (title: string) => {
-    set(
-      "service",
-      form.service.includes(title)
-        ? form.service.filter((s) => s !== title)
-        : [...form.service, title],
-    );
+  const toggleService = (id: number) => {
+    setForm((f) => ({
+      ...f,
+      serviceIds: f.serviceIds.includes(id)
+        ? f.serviceIds.filter((s) => s !== id)
+        : [...f.serviceIds, id],
+    }));
+    setErrors((e) => ({ ...e, services: undefined }));
+  };
+
+  /** Catalogue name is canonical English; show the translated label when we
+   *  can map its slug onto one of our routes. */
+  const labelFor = (service: ServiceSummary) => {
+    const routeSlug = BACKEND_TO_ROUTE_SLUG[service.slug];
+    const translated = routeSlug
+      ? serviceNames[routeSlug as keyof typeof serviceNames]
+      : undefined;
+    return translated ?? service.name;
   };
 
   async function onSubmit(e: React.FormEvent) {
@@ -56,11 +76,11 @@ export default function QuoteForm({
     setMessage("");
 
     // Photos go straight to S3; only the keys travel with the quote.
-    let images: string[] = [];
+    let pictureKeys: string[] = [];
     if (files.length > 0) {
       setUploadNote(t.uploading);
       try {
-        images = await Promise.all(files.map(uploadToS3));
+        pictureKeys = await Promise.all(files.map(uploadToS3));
       } catch {
         setUploadNote("");
         setStatus("error");
@@ -70,7 +90,7 @@ export default function QuoteForm({
       setUploadNote("");
     }
 
-    const result = await submitQuote({ ...form, images }, t);
+    const result = await submitQuote({ ...form, pictureKeys }, t);
     setStatus(result.success ? "success" : "error");
     setMessage(result.message);
 
@@ -100,25 +120,35 @@ export default function QuoteForm({
     );
   }
 
+  // Without a catalogue there are no valid serviceId values, so the quote POST
+  // cannot succeed. Say so rather than showing a form that will always fail.
+  if (catalog.length === 0) {
+    return (
+      <p className="mx-auto mt-[60px] max-w-[760px] border-l-[3px] border-[#b3261e] bg-[#b3261e]/5 px-[20px] py-[14px] text-center text-[16px] text-[#b3261e]">
+        {t.catalogUnavailable}
+      </p>
+    );
+  }
+
   return (
     <form onSubmit={onSubmit} noValidate className="mx-auto mt-[65px] max-w-[960px]">
       <div className="grid grid-cols-2 gap-x-[30px] gap-y-[30px] max-md:grid-cols-1">
         <div>
-          <label className={LABEL} htmlFor="name">{t.firstName} *</label>
+          <label className={LABEL} htmlFor="firstName">{t.firstName} *</label>
           <input
-            id="name" className={FIELD} value={form.name}
-            onChange={(e) => set("name", e.target.value)}
+            id="firstName" className={FIELD} value={form.firstName}
+            onChange={(e) => set("firstName", e.target.value)}
           />
-          {errors.name && <span className={ERROR}>{errors.name}</span>}
+          {errors.firstName && <span className={ERROR}>{errors.firstName}</span>}
         </div>
 
         <div>
-          <label className={LABEL} htmlFor="lastname">{t.lastName} *</label>
+          <label className={LABEL} htmlFor="lastName">{t.lastName} *</label>
           <input
-            id="lastname" className={FIELD} value={form.lastname}
-            onChange={(e) => set("lastname", e.target.value)}
+            id="lastName" className={FIELD} value={form.lastName}
+            onChange={(e) => set("lastName", e.target.value)}
           />
-          {errors.lastname && <span className={ERROR}>{errors.lastname}</span>}
+          {errors.lastName && <span className={ERROR}>{errors.lastName}</span>}
         </div>
 
         <div>
@@ -145,22 +175,22 @@ export default function QuoteForm({
           {t.servicesLegend} *
         </legend>
         <div className="mt-[25px] grid grid-cols-3 gap-x-[30px] gap-y-[16px] max-lg:grid-cols-2 max-md:grid-cols-1">
-          {quoteServices.map((s) => (
+          {catalog.map((service) => (
             <label
-              key={s.slug}
+              key={service.id}
               className="flex cursor-pointer items-start gap-[12px] text-[16px] leading-[24px] text-black"
             >
               <input
                 type="checkbox"
-                checked={form.service.includes(s.title)}
-                onChange={() => toggleService(s.title)}
+                checked={form.serviceIds.includes(service.id)}
+                onChange={() => toggleService(service.id)}
                 className="mt-[3px] h-[18px] w-[18px] shrink-0 accent-[#222e55]"
               />
-              {serviceNames[s.slug as keyof typeof serviceNames] ?? s.title}
+              {labelFor(service)}
             </label>
           ))}
         </div>
-        {errors.service && <span className={ERROR}>{errors.service}</span>}
+        {errors.services && <span className={ERROR}>{errors.services}</span>}
       </fieldset>
 
       <fieldset className="mt-[50px]">
@@ -169,10 +199,10 @@ export default function QuoteForm({
         </legend>
         <div className="mt-[25px] grid grid-cols-2 gap-x-[30px] gap-y-[30px] max-md:grid-cols-1">
           <div>
-            <label className={LABEL} htmlFor="country">{t.country}</label>
+            <label className={LABEL} htmlFor="country">{t.country} *</label>
             <select
               id="country" className={FIELD} value={form.country}
-              onChange={(e) => set("country", e.target.value)}
+              onChange={(e) => set("country", e.target.value as QuoteFormData["country"])}
             >
               {countries.map((c) => (
                 <option key={c} value={c}>
@@ -183,28 +213,39 @@ export default function QuoteForm({
           </div>
 
           <div>
-            <label className={LABEL} htmlFor="town">{t.town}</label>
+            <label className={LABEL} htmlFor="provinceState">{t.provinceState}</label>
             <input
-              id="town" className={FIELD} value={form.town}
-              onChange={(e) => set("town", e.target.value)} placeholder="Toronto"
+              id="provinceState" className={FIELD} value={form.provinceState}
+              onChange={(e) => set("provinceState", e.target.value)} placeholder="ON"
             />
           </div>
 
           <div>
-            <label className={LABEL} htmlFor="street">{t.street}</label>
+            <label className={LABEL} htmlFor="city">{t.town} *</label>
+            <input
+              id="city" className={FIELD} value={form.city}
+              onChange={(e) => set("city", e.target.value)} placeholder="Toronto"
+            />
+            {errors.city && <span className={ERROR}>{errors.city}</span>}
+          </div>
+
+          <div>
+            <label className={LABEL} htmlFor="street">{t.street} *</label>
             <input
               id="street" className={FIELD} value={form.street}
               onChange={(e) => set("street", e.target.value)}
               placeholder="4548 Dufferin St."
             />
+            {errors.street && <span className={ERROR}>{errors.street}</span>}
           </div>
 
           <div>
-            <label className={LABEL} htmlFor="postal">{t.postal}</label>
+            <label className={LABEL} htmlFor="postalCode">{t.postal} *</label>
             <input
-              id="postal" className={FIELD} value={form.postal_code}
-              onChange={(e) => set("postal_code", e.target.value)} placeholder="M3H 5R9"
+              id="postalCode" className={FIELD} value={form.postalCode}
+              onChange={(e) => set("postalCode", e.target.value)} placeholder="M3H 5R9"
             />
+            {errors.postalCode && <span className={ERROR}>{errors.postalCode}</span>}
           </div>
         </div>
       </fieldset>
@@ -216,6 +257,7 @@ export default function QuoteForm({
           value={form.description}
           onChange={(e) => set("description", e.target.value)}
           placeholder={t.descriptionPlaceholder}
+          maxLength={4000}
         />
       </div>
 
@@ -223,7 +265,7 @@ export default function QuoteForm({
         <label className={LABEL} htmlFor="photos">{t.photos}</label>
         <input
           id="photos" type="file" accept="image/*" multiple
-          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+          onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 20))}
           className="block w-full text-[16px] text-black file:mr-4 file:border-0 file:bg-navy-light file:px-[24px] file:py-[12px] file:text-[14px] file:uppercase file:text-white hover:file:bg-navy"
         />
         {files.length > 0 && (

@@ -1,14 +1,37 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
+/** Max key length accepted by QuoteRequest.pictureKeys. */
+const MAX_KEY_LENGTH = 1024;
+
+/**
+ * Build a collision-proof object key.
+ *
+ * The backend presigns whatever name it is handed and stores objects at the
+ * bucket root, so two visitors uploading "photo.jpg" would overwrite one
+ * another — the second quote's images would silently become the first's. The
+ * key we ask to presign is ours to choose, so prefix it with a UUID.
+ */
+function buildKey(fileName: string): string {
+  const safe = fileName
+    .normalize("NFKD")
+    .replace(/[^\w.\-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(-120);
+  const key = `${crypto.randomUUID()}-${safe || "upload"}`;
+  return key.slice(0, MAX_KEY_LENGTH);
+}
+
 /**
  * Two-step upload: ask the backend for a presigned S3 PUT URL, then send the
- * file straight to S3. Only the returned key is stored on the quote.
+ * file straight to S3. Only the key travels with the quote, as `pictureKeys`.
  *
  * The presigned URL is short-lived (60s), so upload immediately after asking.
  */
 export async function uploadToS3(file: File): Promise<string> {
+  const key = buildKey(file.name);
+
   const presignedRes = await fetch(
-    `${API_BASE_URL}/api/upload/${encodeURIComponent(file.name)}`,
+    `${API_BASE_URL}/api/upload/${encodeURIComponent(key)}`,
     { method: "GET" },
   );
 
@@ -33,5 +56,5 @@ export async function uploadToS3(file: File): Promise<string> {
     throw new Error("Failed to upload the file");
   }
 
-  return file.name;
+  return key;
 }
