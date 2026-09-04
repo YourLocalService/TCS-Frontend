@@ -75,12 +75,15 @@ export default function QuoteForm({
     setStatus("submitting");
     setMessage("");
 
-    // Photos go straight to S3; only the keys travel with the quote.
+    // Photos go straight to S3; only the keys travel with the quote. Promise.all
+    // resolves in argument order regardless of which upload finishes first, so
+    // pictureKeys stays in the order the visitor picked — that order becomes
+    // quote_picture.position on the server.
     let pictureKeys: string[] = [];
     if (files.length > 0) {
       setUploadNote(t.uploading);
       try {
-        pictureKeys = await Promise.all(files.map(uploadToS3));
+        pictureKeys = await Promise.all(files.map((file) => uploadToS3(file)));
       } catch {
         setUploadNote("");
         setStatus("error");
