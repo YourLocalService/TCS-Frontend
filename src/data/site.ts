@@ -59,7 +59,7 @@ export const navLinks = [
 ];
 
 export const heroImages: Record<string, string> = {
-  mounting: "/images/hero-mounting.jpg",
+  mounting: "/images/hero-mounting.png",
   thermal: "/images/hero-thermal.png",
   "hydro-isolation": "/images/hero-hydro-isolation.png",
   remont: "/images/hero-remont.png",

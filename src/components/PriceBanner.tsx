@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ButtonMain } from "./Button";
 import { localePath, type Dictionary, type Locale } from "@/i18n/dictionaries";
 
@@ -16,11 +17,17 @@ export default function PriceBanner({
   ctaLabel?: string;
 }) {
   return (
-    <section
-      className="bg-navy bg-cover bg-center bg-no-repeat px-[15px] pb-[155px] pt-[215px] max-lg:py-20"
-      style={{ backgroundImage: "url('/images/price-banner-bg.png')" }}
-    >
-      <div className="mx-auto max-w-[1440px] text-center">
+    <section className="relative overflow-hidden bg-navy px-[15px] pb-[155px] pt-[215px] max-lg:py-20">
+      <Image
+        src="/images/price-banner-bg.png"
+        alt=""
+        fill
+        quality={90}
+        sizes="100vw"
+        className="object-cover object-center"
+      />
+
+      <div className="relative mx-auto max-w-[1440px] text-center">
         <h2 className="font-serif text-[48px] font-normal text-white max-lg:text-4xl">
           {dict.heading}
         </h2>

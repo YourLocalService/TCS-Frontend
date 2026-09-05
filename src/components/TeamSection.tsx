@@ -25,6 +25,8 @@ export default function TeamSection({ dict }: { dict: Dictionary["team"] }) {
                 alt={member.name}
                 width={440}
                 height={430}
+                quality={90}
+                sizes="(min-width: 1280px) 440px, 100vw"
                 className="h-[430px] w-[440px] object-cover max-xl:w-full"
               />
               <p className="mt-[30px] font-serif text-[24px] text-black">

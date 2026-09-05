@@ -32,6 +32,8 @@ export default function ServiceTiles({
                 alt={tileNames[tile.key as keyof typeof tileNames] ?? tile.title}
                 width={670}
                 height={493}
+                quality={90}
+                sizes="(min-width: 1280px) 670px, 100vw"
                 className="h-[493px] w-[670px] object-cover max-xl:h-auto max-xl:w-full"
               />
               <div className="mt-[40px] text-center font-serif text-[28px] uppercase text-black transition-colors group-hover:text-navy">

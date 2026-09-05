@@ -21,7 +21,8 @@ export default function Hero({
         src={image}
         alt=""
         fill
-        priority
+        preload
+        quality={90}
         sizes="100vw"
         className="object-cover"
       />

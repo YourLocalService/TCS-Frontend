@@ -13,7 +13,9 @@ export default function Logo({
       alt="TCS — Technological Construction Service"
       width={220}
       height={70}
-      priority
+      preload
+      quality={95}
+      sizes="(min-width: 640px) 200px, 160px"
       className={`h-auto w-[160px] sm:w-[200px] ${
         variant === "light" ? "brightness-0 invert" : ""
       } ${className}`}

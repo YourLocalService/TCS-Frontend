@@ -17,7 +17,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         title={dict.home.heroTitle}
         subtitle={dict.home.heroSubtitle}
         ctaLabel={dict.home.heroCta}
-        image="/images/hero-home.jpg"
+        image="/images/hero-main.png"
         lang={lang}
       />
 
@@ -35,6 +35,8 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
               alt=""
               width={792}
               height={545}
+              quality={90}
+              sizes="(min-width: 1024px) 792px, 100vw"
               className="h-[545px] w-[792px] object-cover max-lg:h-auto max-lg:w-full"
             />
             <div className="w-[528px] max-lg:w-full">

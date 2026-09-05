@@ -55,6 +55,8 @@ export default async function Page({ params }: PageProps<"/[lang]/about-us">) {
             alt=""
             width={770}
             height={274}
+            quality={90}
+            sizes="(min-width: 1024px) 770px, 100vw"
             className="mt-[70px] h-[274px] w-[770px] object-cover max-lg:h-auto max-lg:w-full"
           />
         )}

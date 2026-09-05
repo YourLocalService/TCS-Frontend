@@ -30,7 +30,10 @@ export default function GalleryCarousel({ images }: { images: string[] }) {
           alt=""
           width={1050}
           height={550}
-          priority
+          quality={90}
+          loading="eager"
+          fetchPriority="high"
+          sizes="(min-width: 1080px) 1050px, 100vw"
           className="mx-auto h-[550px] w-[1050px] max-w-full object-cover"
         />
 
@@ -68,6 +71,8 @@ export default function GalleryCarousel({ images }: { images: string[] }) {
               alt=""
               width={150}
               height={100}
+              quality={90}
+              sizes="150px"
               className="h-[100px] w-[150px] object-cover"
             />
           </button>

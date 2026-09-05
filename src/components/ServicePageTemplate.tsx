@@ -81,6 +81,8 @@ export default function ServicePageTemplate({
                   alt=""
                   width={750}
                   height={457}
+                  quality={90}
+                  sizes="(min-width: 1024px) 750px, 100vw"
                   className="w-[750px] shrink-0 object-cover max-lg:w-full"
                 />
               )}
@@ -106,6 +108,8 @@ export default function ServicePageTemplate({
                         alt={item}
                         width={453}
                         height={317}
+                        quality={90}
+                        sizes="(min-width: 1280px) 453px, 100vw"
                         className="h-[317px] w-[453px] object-cover max-xl:h-auto max-xl:w-full"
                       />
                     )}
